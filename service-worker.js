@@ -1,10 +1,10 @@
-const CACHE_NAME = "Spectrum-v4";
+const CACHE_NAME = "Spectrum-v2";
 const urlsToCache = [
   "/",
   "/home.html",
   "/manifest.json",
-  "/resources/Icons001.png",
-  "/resources/Icons002.png"
+  "/iconzip.png",
+  "/bscwap.png"
 ];
 
 self.addEventListener("install", event => {
