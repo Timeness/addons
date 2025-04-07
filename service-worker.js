@@ -1,4 +1,4 @@
-const CACHE_NAME = "Spectrum-v2";
+const CACHE_NAME = "Spectrum-v3";
 const urlsToCache = [
   "/",
   "/home.html",
