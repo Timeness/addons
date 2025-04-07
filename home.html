@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <title>Spectrum App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Signika+Negative&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      font-family: 'Signika Negative', sans-serif;
+      color: #fff;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen text-center">
+  <div>
+    <h1 class="text-3xl font-bold mb-4">Welcome to the Spectrum Protocol</h1>
+    <p class="text-sm opacity-80">Your app is installed and running in standalone mode.</p>
+  </div>
+
+  <div id="updateNotice" class="hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black font-semibold px-6 py-3 rounded-full shadow-lg z-50 animate-bounce">
+    New update available ! <button onclick="location.reload()" class="ml-2 underline">Refresh</button>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(reg => {
+        reg.onupdatefound = () => {
+          const newWorker = reg.installing;
+          newWorker.onstatechange = () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              document.getElementById("updateNotice").classList.remove("hidden");
+            }
+          };
+        };
+      });
+    }
+  </script>
+</body>
+</html>
