@@ -1,0 +1,21 @@
+{
+  "name": "Spectrum App",
+  "short_name": "Spectrum",
+  "start_url": "home.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./resources/Icons001.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./resources/Icons002.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
