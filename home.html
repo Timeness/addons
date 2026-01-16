@@ -1,69 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="manifest.json" />
-    <title>Spectrum Protocol</title>
-    <link href="https://fonts.googleapis.com/css2?family=Signika+Negative&display=swap" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-    <style>
-        body { background-color: #000; font-family: 'Signika Negative', sans-serif; color: #fff; }
-        /* Update Popup Style */
-        #update-banner {
-            display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: #facc15; color: #000; padding: 15px 25px; border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9999; font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <title>Spectrum Protocol | Mining</title>
+  <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: radial-gradient(circle at top right, #1e1e1e, #000);
+      font-family: 'Signika Negative', sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+    }
+    .mining-glow {
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
+      transition: 0.3s;
+    }
+    .mining-glow:active { transform: scale(0.95); }
+    
+    /* Animation for the floating effect */
+    .float { animation: floating 3s ease-in-out infinite; }
+    @keyframes floating {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+  </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen text-center">
+<body class="flex items-center justify-center min-h-screen p-6">
 
-    <h1 class="text-2xl font-bold mb-6">Install Spectrum Protocol to start mining...</h1>
-    <button id="installBtn" class="bg-yellow-400 text-black px-5 py-2 rounded-lg shadow-md mb-4" style="display:none;">Install App</button>
-
-    <div id="update-banner">
-        New update available! 
-        <button onclick="window.location.reload()" class="ml-3 bg-black text-white px-3 py-1 rounded">Refresh</button>
+  <div class="glass-card p-8 w-full max-w-md text-center relative">
+    <div class="absolute top-4 right-4 flex items-center bg-green-500 bg-opacity-20 px-3 py-1 rounded-full">
+      <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+      <span class="text-xs text-green-400 font-bold uppercase">System Live</span>
     </div>
 
-    <script>
-        // --- 1. PWA Installation Logic ---
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
+    <h1 class="text-4xl font-bold mb-2 tracking-tight text-yellow-400">Spectrum</h1>
+    <p class="text-gray-400 text-sm mb-8 italic">Protocol Node #4029</p>
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'inline-block';
-        });
+    <div class="mb-10 float">
+      <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Current Balance</p>
+      <div class="text-5xl font-bold tracking-tighter" id="balance">0.0000</div>
+      <p class="text-yellow-400 text-sm mt-1 font-semibold">SPCT Tokens</p>
+    </div>
 
-        installBtn.addEventListener('click', () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+    <button id="mineBtn" class="w-full bg-yellow-400 text-black font-extrabold py-4 rounded-xl shadow-xl mining-glow uppercase tracking-wider mb-6">
+      Start Mining
+    </button>
+
+    <div class="grid grid-cols-2 gap-4 text-left">
+      <div class="bg-white bg-opacity-5 p-3 rounded-lg">
+        <p class="text-xs text-gray-500">Hash Rate</p>
+        <p class="font-bold">12.4 GH/s</p>
+      </div>
+      <div class="bg-white bg-opacity-5 p-3 rounded-lg">
+        <p class="text-xs text-gray-500">Active Nodes</p>
+        <p class="font-bold">1,284</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="updateNotice" class="hidden fixed top-6 bg-yellow-400 text-black font-bold px-6 py-3 rounded-full shadow-2xl z-50 flex items-center">
+    🚀 New Version Available! 
+    <button onclick="location.reload()" class="ml-4 bg-black text-white px-3 py-1 rounded-full text-xs">Update Now</button>
+  </div>
+
+  <script>
+    // Simple Mining Counter Logic
+    let balance = 0.0000;
+    const balanceEl = document.getElementById('balance');
+    const mineBtn = document.getElementById('mineBtn');
+    let isMining = false;
+
+    mineBtn.onclick = () => {
+      if(!isMining) {
+        isMining = true;
+        mineBtn.innerText = "Mining Active...";
+        mineBtn.classList.replace('bg-yellow-400', 'bg-gray-700');
+        mineBtn.classList.add('text-yellow-400');
+        
+        setInterval(() => {
+          balance += 0.0002;
+          balanceEl.innerText = balance.toFixed(4);
+        }, 1000);
+      }
+    };
+
+    // Service Worker Logic (Fixed path)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(reg => {
+        reg.onupdatefound = () => {
+          const newWorker = reg.installing;
+          newWorker.onstatechange = () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              document.getElementById("updateNotice").classList.remove("hidden");
             }
-        });
-
-        // --- 2. Service Worker & Update Logic ---
-        if ('service-worker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(reg => {
-                    // Update check karne ke liye logic
-                    reg.onupdatefound = () => {
-                        const installingWorker = reg.installing;
-                        installingWorker.onstatechange = () => {
-                            if (installingWorker.state === 'installed') {
-                                if (navigator.serviceWorker.controller) {
-                                    // Jab naya content install ho jaye, popup dikhayein
-                                    document.getElementById('update-banner').style.display = 'block';
-                                }
-                            }
-                        };
-                    };
-                });
-            });
-        }
-    </script>
+          };
+        };
+      });
+    }
+  </script>
 </body>
 </html>
