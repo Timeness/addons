@@ -1,44 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="manifest" href="manifest.json" />
-  <title>Spectrum Protocol</title>
-  <link href="https://fonts.googleapis.com/css2?family=Signika+Negative&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <style>
-    body {
-      background-color: #000;
-      font-family: 'Signika Negative', sans-serif;
-      color: #fff;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="manifest.json" />
+    <title>Spectrum Protocol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Signika+Negative&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <style>
+        body { background-color: #000; font-family: 'Signika Negative', sans-serif; color: #fff; }
+        /* Update Popup Style */
+        #update-banner {
+            display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #facc15; color: #000; padding: 15px 25px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9999; font-weight: bold;
+        }
+    </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen text-center">
-  <h1 class="text-2xl font-bold mb-6">Install Spectrum Protocol in you mobile to start mining...</h1>
-  <button id="installBtn" class="bg-yellow-400 text-black px-5 py-2 rounded-lg shadow-md">Install App</button>
 
-  <script>
-    let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
-    installBtn.style.display = 'none';
+    <h1 class="text-2xl font-bold mb-6">Install Spectrum Protocol to start mining...</h1>
+    <button id="installBtn" class="bg-yellow-400 text-black px-5 py-2 rounded-lg shadow-md mb-4" style="display:none;">Install App</button>
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'inline-block';
+    <div id="update-banner">
+        New update available! 
+        <button onclick="window.location.reload()" class="ml-3 bg-black text-white px-3 py-1 rounded">Refresh</button>
+    </div>
 
-      installBtn.addEventListener('click', () => {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(choiceResult => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('User accepted install');
-          }
-          deferredPrompt = null;
+    <script>
+        // --- 1. PWA Installation Logic ---
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'inline-block';
         });
-      });
-    });
-  </script>
+
+        installBtn.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+            }
+        });
+
+        // --- 2. Service Worker & Update Logic ---
+        if ('service-worker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(reg => {
+                    // Update check karne ke liye logic
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === 'installed') {
+                                if (navigator.serviceWorker.controller) {
+                                    // Jab naya content install ho jaye, popup dikhayein
+                                    document.getElementById('update-banner').style.display = 'block';
+                                }
+                            }
+                        };
+                    };
+                });
+            });
+        }
+    </script>
 </body>
 </html>
