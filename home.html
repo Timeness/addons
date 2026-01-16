@@ -4,102 +4,153 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="manifest.json">
-  <title>Spectrum Protocol | Mining</title>
-  <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300;600&display=swap" rel="stylesheet">
+  <title>Spectrum Protocol | Enterprise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
+    :root { --accent: #facc15; --bg: #050505; --card: #111111; }
     body {
-      background: radial-gradient(circle at top right, #1e1e1e, #000);
-      font-family: 'Signika Negative', sans-serif;
+      background-color: var(--bg);
+      font-family: 'Inter', sans-serif;
       color: #fff;
-      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
-    .glass-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 24px;
+    .neo-card {
+      background: var(--card);
+      border: 1px solid #222;
+      border-radius: 1.5rem;
     }
-    .mining-glow {
-      box-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
-      transition: 0.3s;
-    }
-    .mining-glow:active { transform: scale(0.95); }
+    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
     
-    /* Animation for the floating effect */
-    .float { animation: floating 3s ease-in-out infinite; }
-    @keyframes floating {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
+    /* Progress Bar Animation */
+    .progress-bar {
+      height: 4px; background: #222; border-radius: 10px; overflow: hidden;
     }
+    .progress-fill {
+      height: 100%; background: var(--accent); width: 0%; transition: width 0.5s ease;
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid #222;
+      display: flex; justify-content: space-around; padding: 1rem;
+      z-index: 100;
+    }
+    
+    .nav-item { color: #555; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+    .nav-item.active { color: var(--accent); }
+
+    .mining-active-text { letter-spacing: 0.2rem; }
   </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-6">
+<body class="pb-24">
 
-  <div class="glass-card p-8 w-full max-w-md text-center relative">
-    <div class="absolute top-4 right-4 flex items-center bg-green-500 bg-opacity-20 px-3 py-1 rounded-full">
-      <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-      <span class="text-xs text-green-400 font-bold uppercase">System Live</span>
+  <header class="p-6 flex justify-between items-center">
+    <div>
+      <h2 class="text-xs text-gray-500 font-bold uppercase tracking-widest">Protocol Version</h2>
+      <p class="text-sm font-mono text-yellow-500">v4.0.2-alpha</p>
+    </div>
+    <div class="h-10 w-10 rounded-full border border-gray-800 flex items-center justify-center bg-gray-900">
+      <span class="text-xs">ID</span>
+    </div>
+  </header>
+
+  <main class="px-6">
+    <div class="neo-card p-8 mb-6 text-center">
+      <p class="text-xs text-gray-500 mb-2 uppercase tracking-tighter font-semibold">Accumulated Assets</p>
+      <h1 class="text-5xl font-extrabold mb-2 tracking-tighter" id="balance">0.0000</h1>
+      <div class="flex justify-center items-center gap-2 mb-8">
+        <span class="text-yellow-500 font-bold text-sm">SPCT</span>
+        <span class="text-gray-600 text-xs">≈ $0.00 USD</span>
+      </div>
+      
+      <div class="progress-bar mb-2">
+        <div id="p-fill" class="progress-fill"></div>
+      </div>
+      <div class="flex justify-between text-[10px] text-gray-500 font-mono uppercase">
+        <span>Node Stability: 98.2%</span>
+        <span>Next Halving: 42d</span>
+      </div>
     </div>
 
-    <h1 class="text-4xl font-bold mb-2 tracking-tight text-yellow-400">Spectrum</h1>
-    <p class="text-gray-400 text-sm mb-8 italic">Protocol Node #4029</p>
-
-    <div class="mb-10 float">
-      <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Current Balance</p>
-      <div class="text-5xl font-bold tracking-tighter" id="balance">0.0000</div>
-      <p class="text-yellow-400 text-sm mt-1 font-semibold">SPCT Tokens</p>
+    <div class="stat-grid mb-6">
+      <div class="neo-card p-4">
+        <p class="text-[10px] text-gray-500 uppercase mb-1">Hash Power</p>
+        <p class="text-lg font-bold">24.8 <span class="text-xs text-gray-600">TH/s</span></p>
+      </div>
+      <div class="neo-card p-4">
+        <p class="text-[10px] text-gray-500 uppercase mb-1">Network Load</p>
+        <p class="text-lg font-bold">14 <span class="text-xs text-gray-600">ms</span></p>
+      </div>
+      <div class="neo-card p-4">
+        <p class="text-[10px] text-gray-500 uppercase mb-1">Uptime</p>
+        <p class="text-lg font-bold">99.9 <span class="text-xs text-gray-600">%</span></p>
+      </div>
+      <div class="neo-card p-4">
+        <p class="text-[10px] text-gray-500 uppercase mb-1">Active Peers</p>
+        <p class="text-lg font-bold">842</p>
+      </div>
     </div>
 
-    <button id="mineBtn" class="w-full bg-yellow-400 text-black font-extrabold py-4 rounded-xl shadow-xl mining-glow uppercase tracking-wider mb-6">
-      Start Mining
+    <button id="mineBtn" class="w-full bg-white text-black font-black py-5 rounded-2xl transition-all duration-300 transform active:scale-95 mb-4 uppercase text-sm tracking-widest">
+      Initialize Mining
     </button>
+  </main>
 
-    <div class="grid grid-cols-2 gap-4 text-left">
-      <div class="bg-white bg-opacity-5 p-3 rounded-lg">
-        <p class="text-xs text-gray-500">Hash Rate</p>
-        <p class="font-bold">12.4 GH/s</p>
-      </div>
-      <div class="bg-white bg-opacity-5 p-3 rounded-lg">
-        <p class="text-xs text-gray-500">Active Nodes</p>
-        <p class="font-bold">1,284</p>
-      </div>
+  <nav class="bottom-nav">
+    <div class="nav-item active text-center">
+      <p>Mining</p>
     </div>
-  </div>
+    <div class="nav-item text-center">
+      <p>Wallet</p>
+    </div>
+    <div class="nav-item text-center">
+      <p>Nodes</p>
+    </div>
+    <div class="nav-item text-center">
+      <p>Settings</p>
+    </div>
+  </nav>
 
-  <div id="updateNotice" class="hidden fixed top-6 bg-yellow-400 text-black font-bold px-6 py-3 rounded-full shadow-2xl z-50 flex items-center">
-    🚀 New Version Available! 
-    <button onclick="location.reload()" class="ml-4 bg-black text-white px-3 py-1 rounded-full text-xs">Update Now</button>
+  <div id="updateNotice" class="hidden fixed top-0 left-0 w-full bg-yellow-500 text-black p-3 text-center text-xs font-bold z-50">
+    SYSTEM UPDATE AVAILABLE. <button onclick="location.reload()" class="underline ml-2">REBOOT NOW</button>
   </div>
 
   <script>
-    // Simple Mining Counter Logic
     let balance = 0.0000;
+    let isMining = false;
     const balanceEl = document.getElementById('balance');
     const mineBtn = document.getElementById('mineBtn');
-    let isMining = false;
+    const pFill = document.getElementById('p-fill');
 
     mineBtn.onclick = () => {
       if(!isMining) {
         isMining = true;
-        mineBtn.innerText = "Mining Active...";
-        mineBtn.classList.replace('bg-yellow-400', 'bg-gray-700');
-        mineBtn.classList.add('text-yellow-400');
+        mineBtn.innerText = "Node Synchronized";
+        mineBtn.classList.replace('bg-white', 'bg-gray-900');
+        mineBtn.classList.add('text-yellow-500', 'border', 'border-yellow-900');
         
+        let progress = 0;
         setInterval(() => {
-          balance += 0.0002;
+          balance += 0.00041;
           balanceEl.innerText = balance.toFixed(4);
+          
+          progress = (progress + 1) % 100;
+          pFill.style.width = progress + "%";
         }, 1000);
       }
     };
 
-    // Service Worker Logic (Fixed path)
+    // PWA Update Logic
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').then(reg => {
         reg.onupdatefound = () => {
-          const newWorker = reg.installing;
-          newWorker.onstatechange = () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          const sw = reg.installing;
+          sw.onstatechange = () => {
+            if (sw.state === 'installed' && navigator.serviceWorker.controller) {
               document.getElementById("updateNotice").classList.remove("hidden");
             }
           };
